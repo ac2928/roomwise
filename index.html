@@ -1,0 +1,103 @@
+<!--
+  index.html — the CATALOG page (the home page).
+  Shows all products in a grid, with a search bar and buttons to filter by room.
+  The search and the room filter work together.
+  Clicking a product opens product.html for that item.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roomwise - Smart Home Gadgets</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html"><h1>🏠 Roomwise</h1></a>
+    <a href="cart.html">🛒 Cart (<span id="cart-count">0</span>)</a>
+  </header>
+
+  <main>
+    <h2>Shop by room</h2>
+
+    <!-- Search bar. "oninput" runs every time you type a letter,
+         so the results update as you type. -->
+    <input type="text" id="search" class="search-box"
+           placeholder="Search products..." oninput="drawProducts()">
+
+    <!-- Filter buttons. Each one tells the page which room to show. -->
+    <div class="filters">
+      <button class="active" onclick="pickRoom('all', this)">All</button>
+      <button onclick="pickRoom('kitchen', this)">Kitchen</button>
+      <button onclick="pickRoom('living room', this)">Living Room</button>
+      <button onclick="pickRoom('bedroom', this)">Bedroom</button>
+      <button onclick="pickRoom('outdoor', this)">Outdoor</button>
+    </div>
+
+    <!-- Product cards (or the "No products found" message) go in here -->
+    <div class="grid" id="product-grid"></div>
+  </main>
+
+  <script src="products.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    // Remembers which room button is picked right now ("all" at the start).
+    let currentRoom = "all";
+
+    // Runs when a room button is clicked.
+    function pickRoom(room, button) {
+      currentRoom = room;
+
+      // Highlight the button that was clicked
+      document.querySelectorAll(".filters button").forEach(function (b) {
+        b.classList.remove("active");
+      });
+      button.classList.add("active");
+
+      drawProducts();
+    }
+
+    // Draw the product cards that match BOTH the picked room AND the search text.
+    function drawProducts() {
+      // Get what the user typed, in lowercase so "Smart" and "smart" both match
+      const searchText = document.getElementById("search").value.toLowerCase();
+
+      // Keep only products that pass both checks
+      const list = products.filter(function (p) {
+        const roomMatches = currentRoom === "all" || p.room === currentRoom;
+        const nameMatches = p.name.toLowerCase().includes(searchText);
+        return roomMatches && nameMatches;
+      });
+
+      const grid = document.getElementById("product-grid");
+
+      // If nothing matches, show a message instead of cards
+      if (list.length === 0) {
+        grid.innerHTML = '<p class="no-results">No products found.</p>';
+        return;
+      }
+
+      // Build the HTML for each card
+      let html = "";
+      list.forEach(function (p) {
+        html +=
+          '<div class="card">' +
+            '<a href="product.html?id=' + p.id + '">' +
+              // The product picture (alt text is read by screen readers)
+              '<img class="product-img" src="' + p.image + '" alt="' + p.name + '">' +
+              '<h3>' + p.name + '</h3>' +
+            '</a>' +
+            '<div class="room-tag">' + p.room + '</div>' +
+            '<p class="price">$' + p.price.toFixed(2) + '</p>' +
+            '<button class="btn" onclick="addToCart(' + p.id + ')">Add to cart</button>' +
+          '</div>';
+      });
+      grid.innerHTML = html;
+    }
+
+    // Show all products when the page first loads
+    drawProducts();
+  </script>
+</body>
+</html>

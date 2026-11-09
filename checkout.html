@@ -1,0 +1,84 @@
+<!--
+  checkout.html — the CHECKOUT SIMULATION page.
+  A simple form (name, address, fake card number). NO real payment happens.
+  When submitted, it shows an order confirmation and empties the cart.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - Roomwise</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html"><h1>🏠 Roomwise</h1></a>
+    <a href="cart.html">🛒 Cart (<span id="cart-count">0</span>)</a>
+  </header>
+
+  <main>
+    <h2>Checkout</h2>
+    <p><em>This is a demo. No real payment is taken — please use a fake card number.</em></p>
+    <p class="total">Order total: $<span id="order-total">0.00</span></p>
+
+    <!-- "required" makes the browser check each box is filled in.
+         The card "pattern" means it must be exactly 16 digits. -->
+    <form id="checkout-form">
+      <label>Full name
+        <input type="text" id="name" required>
+      </label>
+      <label>Address
+        <input type="text" id="address" required>
+      </label>
+      <label>Card number (fake, 16 digits)
+        <input type="text" id="card" required pattern="[0-9]{16}"
+               placeholder="1234567812345678">
+      </label>
+      <br>
+      <button type="submit" class="btn">Place order</button>
+    </form>
+
+    <!-- The confirmation message appears here after submitting -->
+    <div id="message"></div>
+  </main>
+
+  <script src="products.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    const form = document.getElementById("checkout-form");
+    const message = document.getElementById("message");
+
+    // Show the total at the top of the page
+    document.getElementById("order-total").textContent = getCartTotal().toFixed(2);
+
+    // If the cart is empty, hide the form
+    if (getCart().length === 0) {
+      form.style.display = "none";
+      message.innerHTML = '<p>Your cart is empty. <a href="index.html">Go shopping!</a></p>';
+    }
+
+    // Runs when the "Place order" button is clicked
+    form.addEventListener("submit", function (event) {
+      event.preventDefault(); // stop the page from reloading
+
+      const name = document.getElementById("name").value;
+      const total = getCartTotal().toFixed(2);
+      const orderNumber = Math.floor(Math.random() * 90000) + 10000; // random 5-digit number
+
+      // Empty the cart and hide the form
+      saveCart([]);
+      form.style.display = "none";
+
+      // Show the confirmation message
+      message.innerHTML =
+        '<div class="confirmation">' +
+          "<h3>✅ Thank you, " + name + "!</h3>" +
+          "<p>Your order #" + orderNumber + " for $" + total + " has been placed.</p>" +
+          "<p>(This was a simulation — no money was charged.)</p>" +
+          '<p><a href="index.html">Keep shopping</a></p>' +
+        "</div>";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!--
+  cart.html — the SHOPPING CART page.
+  Lists every item in the cart. You can change the quantity,
+  remove items, see the total, and go to checkout.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Cart - Roomwise</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <a href="index.html"><h1>🏠 Roomwise</h1></a>
+    <a href="cart.html">🛒 Cart (<span id="cart-count">0</span>)</a>
+  </header>
+
+  <main>
+    <h2>Your cart</h2>
+    <!-- The cart table gets added in here by JavaScript -->
+    <div id="cart-area"></div>
+  </main>
+
+  <script src="products.js"></script>
+  <script src="cart.js"></script>
+  <script>
+    // Draw the cart table. We call this again every time something changes.
+    function showCart() {
+      const cart = getCart();
+      const area = document.getElementById("cart-area");
+
+      if (cart.length === 0) {
+        area.innerHTML = '<p>Your cart is empty. <a href="index.html">Go shopping!</a></p>';
+        return;
+      }
+
+      let rows = "";
+      cart.forEach(function (item) {
+        const p = findProduct(item.id);
+        const lineTotal = p.price * item.qty;
+        rows +=
+          "<tr>" +
+            // Small picture next to the product name
+            '<td><img class="cart-img" src="' + p.image + '" alt=""> ' + p.name + "</td>" +
+            "<td>$" + p.price.toFixed(2) + "</td>" +
+            // When the number changes, update the quantity and redraw
+            '<td><input type="number" min="0" value="' + item.qty + '" ' +
+              'onchange="setQuantity(' + p.id + ', Number(this.value)); showCart();"></td>' +
+            "<td>$" + lineTotal.toFixed(2) + "</td>" +
+            '<td><button onclick="removeFromCart(' + p.id + '); showCart();">Remove</button></td>' +
+          "</tr>";
+      });
+
+      area.innerHTML =
+        "<table>" +
+          "<tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr>" +
+          rows +
+        "</table>" +
+        '<p class="total">Total: $' + getCartTotal().toFixed(2) + "</p>" +
+        '<a href="checkout.html"><button class="btn">Go to checkout</button></a>';
+    }
+
+    showCart();
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+IMAGE-CREDITS.txt
+-----------------
+Where these product pictures come from:
+
+All 12 images in this folder were drawn from scratch for this project
+(computer-drawn illustrations of generic, unbranded gadgets).
+They are not copied from any brand, store, or photographer,
+so they are free to use in this student project.
+
+Want to use real photos instead?
+1. Get a free photo from a site like Unsplash (unsplash.com) or
+   Pexels (pexels.com). Both let you use their photos for free.
+2. Save it in this folder with the SAME file name as the one it
+   replaces (for example: coffee-maker.jpg).
+3. Rebuild the Docker container. No code changes needed.
+Tip: square photos look best because each card shows a square picture.
